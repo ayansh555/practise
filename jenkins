@@ -42,7 +42,7 @@ Build URL  : ${env.BUILD_URL}
 Workspace  : ${env.WORKSPACE}
 Status     : SUCCESS
 """,
-                to: "ayanshkaran555@gmail.com"
+                to: "ayanshkaran188@gmail.com"
             )
         }
 
@@ -57,7 +57,7 @@ Build URL : ${env.BUILD_URL}
 
 Please check Jenkins console logs.
 """,
-                to: "ayanshkaran555@gmail.com"
+                to: "ayanshkaran188@gmail.com"
             )
         }
     }
