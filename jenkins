@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('GIT checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'git',
+                    url: 'https://github.com/ayansh555/spring-petclinic-k8'
+            }
+        }
+
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('scanning') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+    sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+}
+
+            }
+        }
+        stage('package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+    }
+
+    post {
+        success {
+            emailext(
+                subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """Maven package built successfully.
+
+Job Name   : ${env.JOB_NAME}
+Build No   : ${env.BUILD_NUMBER}
+Build URL  : ${env.BUILD_URL}
+Workspace  : ${env.WORKSPACE}
+Status     : SUCCESS
+""",
+                to: "ayanshkaran188@gmail.com"
+            )
+        }
+
+        failure {
+            emailext(
+                subject: "Jenkins Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """Build FAILED ❌
+
+Job Name  : ${env.JOB_NAME}
+Build No  : ${env.BUILD_NUMBER}
+Build URL : ${env.BUILD_URL}
+
+Please check Jenkins console logs.
+""",
+                to: "ayanshkaran188@gmail.com"
+            )
+        }
+    }
+}
